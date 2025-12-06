@@ -155,9 +155,7 @@ fun UnifiedPlayerSheet(
     val currentPosition by remember {
         playerViewModel.playerUiState.map { it.currentPosition }.distinctUntilChanged()
     }.collectAsState(initial = 0L)
-    val remotePosition by playerViewModel.remotePosition.collectAsState()
-    val isRemotePlaybackActive by playerViewModel.isRemotePlaybackActive.collectAsState()
-    val positionToDisplay = if (isRemotePlaybackActive) remotePosition else currentPosition
+    val positionToDisplay = currentPosition
     val isFavorite by playerViewModel.isCurrentSongFavorite.collectAsState()
 
     val currentPlaybackQueue by remember {
@@ -564,8 +562,7 @@ fun UnifiedPlayerSheet(
         derivedStateOf { queueHiddenOffsetPx * 0.08f }
     }
     var pendingSaveQueueOverlay by remember { mutableStateOf<SaveQueueOverlayData?>(null) }
-    var showCastSheet by remember { mutableStateOf(false) }
-    var showTrackVolumeSheet by remember { mutableStateOf(false) }
+
     var isDragging by remember { mutableStateOf(false) }
     var isDraggingPlayerArea by remember { mutableStateOf(false) }
     val velocityTracker = remember { VelocityTracker() }
@@ -1180,10 +1177,7 @@ fun UnifiedPlayerSheet(
                                                             velocity
                                                         )
                                                     },
-                                                    onShowCastClicked = { showCastSheet = true },
-                                                    onShowTrackVolumeClicked = {
-                                                        showTrackVolumeSheet = true
-                                                    },
+
                                                     onShuffleToggle = playerViewModel::toggleShuffle,
                                                     onRepeatToggle = playerViewModel::cycleRepeatMode,
                                                     onFavoriteToggle = playerViewModel::toggleFavorite,
@@ -1240,8 +1234,7 @@ fun UnifiedPlayerSheet(
                                     onPrevious = playerViewModel::previousSong,
                                     onCollapse = {},
 //                                onQueueSheetVisibilityChange = {},
-                                    onShowCastClicked = {},
-                                    onShowTrackVolumeClicked = {},
+
                                     onShuffleToggle = playerViewModel::toggleShuffle,
                                     onRepeatToggle = playerViewModel::cycleRepeatMode,
                                     onFavoriteToggle = playerViewModel::toggleFavorite,
@@ -1344,32 +1337,7 @@ fun UnifiedPlayerSheet(
             }
         }
 
-        if (showCastSheet && !internalIsKeyboardVisible) {
-            CompositionLocalProvider(
-                LocalMaterialTheme provides (albumColorScheme ?: MaterialTheme.colorScheme)
-            ) {
-                CastBottomSheet(
-                    playerViewModel = playerViewModel,
-                    onDismiss = { showCastSheet = false }
-                )
-            }
-        }
 
-        if (showTrackVolumeSheet) {
-            val trackVolume by playerViewModel.trackVolume.collectAsState()
-            CompositionLocalProvider(
-                LocalMaterialTheme provides (albumColorScheme ?: MaterialTheme.colorScheme)
-            ) {
-                TrackVolumeBottomSheet(
-                    theme = LocalMaterialTheme,
-                    initialVolume = trackVolume,
-                    onDismiss = { showTrackVolumeSheet = false },
-                    onVolumeChange = { newVolume ->
-                        playerViewModel.setTrackVolume(newVolume)
-                    }
-                )
-            }
-        }
 
         pendingSaveQueueOverlay?.let { overlay ->
             SaveQueueAsPlaylistSheet(
