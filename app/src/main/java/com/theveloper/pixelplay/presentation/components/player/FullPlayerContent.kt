@@ -132,8 +132,7 @@ fun FullPlayerContent(
     onQueueDragStart: () -> Unit,
     onQueueDrag: (Float) -> Unit,
     onQueueRelease: (Float, Float) -> Unit,
-    onShowCastClicked: () -> Unit,
-    onShowTrackVolumeClicked: () -> Unit,
+
     onShuffleToggle: () -> Unit,
     onRepeatToggle: () -> Unit,
     onFavoriteToggle: () -> Unit
@@ -144,7 +143,7 @@ fun FullPlayerContent(
     val stablePlayerState by playerViewModel.stablePlayerState.collectAsState()
     val lyricsSearchUiState by playerViewModel.lyricsSearchUiState.collectAsState()
 
-    var showFetchLyricsDialog by remember { mutableStateOf(false) }
+
     var totalDrag by remember { mutableStateOf(0f) }
 
     val context = LocalContext.current
@@ -159,7 +158,7 @@ fun FullPlayerContent(
                             playerViewModel.importLyricsFromFile(songId, lyricsContent)
                         }
                     }
-                    showFetchLyricsDialog = false
+
                 } catch (e: Exception) {
                     Timber.e(e, "Error reading imported lyrics file")
                     playerViewModel.sendToast("Error reading file.")
@@ -184,52 +183,13 @@ fun FullPlayerContent(
 
     // Lógica para el botón de Lyrics en el reproductor expandido
     val onLyricsClick = {
-        val lyrics = stablePlayerState.lyrics
-        if (lyrics?.synced.isNullOrEmpty() && lyrics?.plain.isNullOrEmpty()) {
-            // Si no hay letra, mostramos el diálogo para buscar
-            showFetchLyricsDialog = true
-        } else {
-            // Si hay letra, mostramos el sheet directamente
-            showLyricsSheet = true
+        if (stablePlayerState.lyrics == null) {
+            playerViewModel.fetchLyricsForCurrentSong()
         }
+        showLyricsSheet = true
     }
 
-    if (showFetchLyricsDialog) {
-        FetchLyricsDialog(
-            uiState = lyricsSearchUiState,
-            onConfirm = {
-                // El usuario confirma, iniciamos la búsqueda
-                playerViewModel.fetchLyricsForCurrentSong()
-            },
-            onPickResult = { result ->
-                playerViewModel.acceptLyricsSearchResultForCurrentSong(result)
-            },
-            onDismiss = {
-                // El usuario cancela o cierra el diálogo
-                showFetchLyricsDialog = false
-                playerViewModel.resetLyricsSearchState()
-            },
-            onImport = {
-                filePickerLauncher.launch("*/*")
-            }
-        )
-    }
 
-    // Observador para reaccionar al resultado de la búsqueda de letras
-    LaunchedEffect(lyricsSearchUiState) {
-        when (val state = lyricsSearchUiState) {
-            is LyricsSearchUiState.Success -> {
-                if (showFetchLyricsDialog) {
-                    showFetchLyricsDialog = false
-                    showLyricsSheet = true
-                    playerViewModel.resetLyricsSearchState()
-                }
-            }
-            is LyricsSearchUiState.Error -> {
-            }
-            else -> Unit
-        }
-    }
 
     val gestureScope = rememberCoroutineScope()
 
@@ -322,51 +282,7 @@ fun FullPlayerContent(
                             .padding(end = 14.dp),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        // Cast Button
-//                        Box(
-//                            modifier = Modifier
-//                                .size(height = 42.dp, width = 50.dp)
-//                                .clip(
-//                                    RoundedCornerShape(
-//                                        topStart = 50.dp,
-//                                        topEnd = 6.dp,
-//                                        bottomStart = 50.dp,
-//                                        bottomEnd = 6.dp
-//                                    )
-//                                )
-//                                .background(LocalMaterialTheme.current.onPrimary)
-//                                .clickable { onShowCastClicked() },
-//                            contentAlignment = Alignment.Center
-//                        ) {
-//                            Icon(
-//                                painter = painterResource(R.drawable.rounded_cast_24),
-//                                contentDescription = "Cast",
-//                                tint = LocalMaterialTheme.current.primary
-//                            )
-//                        }
 
-                        // Track Volume Button
-                        Box(
-                            modifier = Modifier
-                                .size(height = 42.dp, width = 50.dp)
-                                .clip(
-                                    RoundedCornerShape(
-                                        topStart = 50.dp,
-                                        topEnd = 6.dp,
-                                        bottomStart = 50.dp,
-                                        bottomEnd = 6.dp
-                                    )
-                                )
-                                .background(LocalMaterialTheme.current.onPrimary)
-                                .clickable { onShowTrackVolumeClicked() },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.rounded_volume_up_24),
-                                contentDescription = "Track Volume",
-                                tint = LocalMaterialTheme.current.primary
-                            )
-                        }
 
                         // Queue Button
                         Box(
