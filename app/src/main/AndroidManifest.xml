@@ -82,9 +82,7 @@
             </intent-filter>
         </service>
 
-        <meta-data
-            android:name="com.google.android.gms.car.application"
-            android:resource="@xml/automotive_app_desc" />
+
 
         <receiver
             android:name=".ui.glancewidget.PixelPlayGlanceWidgetReceiver"
@@ -122,9 +120,7 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <meta-data
-            android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value="com.theveloper.pixelplay.data.service.cast.CastOptionsProvider" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
