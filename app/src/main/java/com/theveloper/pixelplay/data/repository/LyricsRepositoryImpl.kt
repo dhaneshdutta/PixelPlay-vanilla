@@ -171,6 +171,28 @@ class LyricsRepositoryImpl @Inject constructor(
     }
 
     private suspend fun loadLyricsFromStorage(song: Song): Lyrics? = withContext(Dispatchers.IO) {
+        // 1. Check for local .lrc file first
+        if (song.path.isNotBlank()) {
+            try {
+                val songFile = File(song.path)
+                val parentDir = songFile.parentFile
+                if (parentDir != null && parentDir.exists()) {
+                    val songNameWithoutExt = songFile.nameWithoutExtension
+                    val lrcFile = File(parentDir, "$songNameWithoutExt.lrc")
+                    if (lrcFile.exists() && lrcFile.canRead()) {
+                        val lrcContent = lrcFile.readText()
+                        val parsedLyrics = LyricsUtils.parseLyrics(lrcContent)
+                        if (parsedLyrics.isValid()) {
+                            LogUtils.d(this@LyricsRepositoryImpl, "Found local LRC file: ${lrcFile.path}")
+                            return@withContext parsedLyrics.copy(areFromRemote = false)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                LogUtils.e(this@LyricsRepositoryImpl, e, "Error checking local LRC file")
+            }
+        }
+
         if (!song.lyrics.isNullOrBlank()) {
             val parsedLyrics = LyricsUtils.parseLyrics(song.lyrics)
             if (parsedLyrics.isValid()) {
