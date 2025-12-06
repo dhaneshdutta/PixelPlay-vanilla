@@ -58,13 +58,28 @@ To get a local copy up and running, follow these simple steps.
 
 ### Installation
 
-1. Clone the repo
+1. **Prerequisites**:
+   - You need **JDK 17** to build this project. Newer versions (like JDK 21/25) might fail with Gradle.
+   - Android Studio Iguana or newer.
+
+2. **Clone the repo**:
    ```sh
-   git clone https://github.com/theovilardo/PixelPlay.git
+   git clone https://github.com/dhaneshdutta/PixelPlay-vanilla.git
+   cd PixelPlay-vanilla
    ```
-2. Open the project in Android Studio.
-3. Let Gradle sync and download the required dependencies.
-4. Run the app on an emulator or a physical device.
+
+3. **Build the APK**:
+   Since this is the Vanilla version (No Google Cast), you can build it easily:
+   ```sh
+   # Make sure to point to your JDK 17 installation
+   ./gradlew assembleDebug -Dorg.gradle.java.home="/path/to/your/jdk-17"
+   ```
+
+4. **Install**:
+   ```sh
+   adb install app/build/outputs/apk/debug/app-debug.apk
+   ```
+
 
 ## 📂 Project Structure
 
