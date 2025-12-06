@@ -82,7 +82,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.generativeai)
     implementation(libs.androidx.mediarouter)
-    implementation(libs.play.services.cast.framework)
+
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.compose.material3)
     testImplementation(libs.junit)
@@ -165,7 +165,7 @@ dependencies {
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.media3.session)
     implementation(libs.androidx.media.router)
-    implementation(libs.google.play.services.cast.framework)
+
 //    implementation(libs.androidx.media3.exoplayer.ffmpeg)
 
     // Palette API for color extraction

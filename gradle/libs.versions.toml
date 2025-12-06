@@ -3,7 +3,7 @@ accompanistDrawablepainter = "0.37.3"
 agp = "8.9.2"
 app = "1.7.0"
 googleGenai = "1.11.0"
-googlePlayServicesCast = "21.5.0"
+
 amplituda = "2.3.0"
 animation = "1.8.1"
 appcompat = "1.7.0"
@@ -74,7 +74,7 @@ generativeai = "0.9.0"
 retrofit = "3.0.0"
 okhttp = "5.1.0"
 mediarouterVersion = "1.8.1"
-playServicesCastFramework = "22.1.0"
+
 navigationRuntimeKtx = "2.9.6"
 material3Version = "1.4.0"
 
@@ -85,7 +85,7 @@ androidx-app-projected = { module = "androidx.car.app:app-projected", version.re
 androidx-media = { module = "androidx.media:media", version.ref = "media" }
 androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts" }
 google-genai = { group = "com.google.genai", name = "google-genai", version.ref = "googleGenai" }
-google-play-services-cast-framework = { group = "com.google.android.gms", name = "play-services-cast-framework", version.ref = "googlePlayServicesCast" }
+
 amplituda = { module = "com.github.lincollincol:amplituda", version.ref = "amplituda" }
 androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -164,7 +164,7 @@ converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", ve
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 androidx-mediarouter = { group = "androidx.mediarouter", name = "mediarouter", version.ref = "mediarouterVersion" }
-play-services-cast-framework = { group = "com.google.android.gms", name = "play-services-cast-framework", version.ref = "playServicesCastFramework" }
+
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Version" }
 
