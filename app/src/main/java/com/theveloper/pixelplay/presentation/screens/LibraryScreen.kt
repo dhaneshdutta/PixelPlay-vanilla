@@ -108,7 +108,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.ui.res.stringResource
-import com.theveloper.pixelplay.presentation.components.AiPlaylistSheet
 import com.theveloper.pixelplay.presentation.components.PlaylistArtCollage
 import com.theveloper.pixelplay.presentation.components.ReorderTabsSheet
 import com.theveloper.pixelplay.presentation.components.SongInfoBottomSheet
@@ -195,6 +194,7 @@ fun LibraryScreen(
     val context = LocalContext.current // Added context
     val lastTabIndex by playerViewModel.lastLibraryTabIndexFlow.collectAsState()
     val favoriteIds by playerViewModel.favoriteSongIds.collectAsState() // Reintroducir favoriteIds aquí
+    val globalLoadingState by playerViewModel.playerUiState.collectAsState()
     val scope = rememberCoroutineScope() // Mantener si se usa para acciones de UI
     val syncManager = playerViewModel.syncManager
     var isRefreshing by remember { mutableStateOf(false) }
@@ -542,7 +542,6 @@ fun LibraryScreen(
                             onSortClick = { playerViewModel.showSortingSheet() },
                             isPlaylistTab = currentTabId == LibraryTabId.PLAYLISTS,
                             isFoldersTab = currentTabId == LibraryTabId.FOLDERS && (!playerUiState.isFoldersPlaylistView || playerUiState.currentFolder != null),
-                            onGenerateWithAiClick = { /* Unused now */ },
                             onImportM3uClick = { m3uImportLauncher.launch("audio/x-mpegurl") },
                             //onFilterClick = { playerViewModel.toggleFolderFilter() },
                             currentFolder = playerUiState.currentFolder,
@@ -676,7 +675,6 @@ fun LibraryScreen(
                                         navController = navController,
                                         playerViewModel = playerViewModel,
                                         bottomBarHeight = bottomBarHeightDp,
-                                        onGenerateWithAiClick = { playerViewModel.showAiPlaylistSheet() },
                                         isRefreshing = isRefreshing,
                                         onRefresh = onRefresh
                                     )
@@ -761,25 +759,7 @@ fun LibraryScreen(
                         }
                     }
                 }
-                val globalLoadingState by playerViewModel.playerUiState.collectAsState()
-                if (globalLoadingState.isGeneratingAiMetadata) {
-                    Surface( // Fondo semitransparente para el indicador
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f)
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                LoadingIndicator(modifier = Modifier.size(64.dp))
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Text(
-                                    text = "Generating metadata with AI...",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        }
-                    }
-                } else if (globalLoadingState.isSyncingLibrary || ((globalLoadingState.isLoadingInitialSongs || globalLoadingState.isLoadingLibraryCategories) && (globalLoadingState.allSongs.isEmpty() && globalLoadingState.albums.isEmpty() && globalLoadingState.artists.isEmpty()))) {
+                if (globalLoadingState.isSyncingLibrary || ((globalLoadingState.isLoadingInitialSongs || globalLoadingState.isLoadingLibraryCategories) && (globalLoadingState.allSongs.isEmpty() && globalLoadingState.albums.isEmpty() && globalLoadingState.artists.isEmpty()))) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f)
@@ -849,7 +829,6 @@ fun LibraryScreen(
                 cropScale = cropScale,
                 cropPanX = cropPanX,
                 cropPanY = cropPanY,
-                isAiGenerated = false,
                 isQueueGenerated = false,
                 coverShapeType = shapeType,
                 coverShapeDetail1 = d1,
@@ -861,25 +840,6 @@ fun LibraryScreen(
     )
 
 
-    val showAiSheet by playerViewModel.showAiPlaylistSheet.collectAsState()
-    val isGeneratingAiPlaylist by playerViewModel.isGeneratingAiPlaylist.collectAsState()
-    val aiError by playerViewModel.aiError.collectAsState()
-
-    if (showAiSheet) {
-        AiPlaylistSheet(
-            onDismiss = { playerViewModel.dismissAiPlaylistSheet() },
-            onGenerateClick = { prompt, minLength, maxLength ->
-                playerViewModel.generateAiPlaylist(
-                    prompt = prompt,
-                    minLength = minLength,
-                    maxLength = maxLength,
-                    saveAsPlaylist = true
-                )
-            },
-            isGenerating = isGeneratingAiPlaylist,
-            error = aiError
-        )
-    }
 
     if (showSongInfoBottomSheet && selectedSongForInfo != null) {
         val currentSong = selectedSongForInfo
@@ -925,9 +885,6 @@ fun LibraryScreen(
                 },
                 onEditSong = { newTitle, newArtist, newAlbum, newGenre, newLyrics, newTrackNumber, coverArtUpdate ->
                     playerViewModel.editSongMetadata(currentSong, newTitle, newArtist, newAlbum, newGenre, newLyrics, newTrackNumber, coverArtUpdate)
-                },
-                generateAiMetadata = { fields ->
-                    playerViewModel.generateAiMetadata(currentSong, fields)
                 },
                 removeFromListTrigger = {}
             )
@@ -2504,7 +2461,6 @@ fun LibraryPlaylistsTab(
     navController: NavController,
     playerViewModel: PlayerViewModel,
     bottomBarHeight: Dp,
-    onGenerateWithAiClick: () -> Unit,
     isRefreshing: Boolean,
     onRefresh: () -> Unit
 ) {

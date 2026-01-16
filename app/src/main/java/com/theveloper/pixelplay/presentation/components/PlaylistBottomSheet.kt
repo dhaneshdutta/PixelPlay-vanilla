@@ -146,7 +146,6 @@ fun PlaylistBottomSheet(
                     onSortClick = { },
                     isPlaylistTab = true,
                     isFoldersTab = false,
-                    onGenerateWithAiClick = { },
                     currentFolder = null,
                     onFolderClick = { },
                     onNavigateBack = { }
@@ -173,10 +172,6 @@ fun PlaylistBottomSheet(
                         onCreate = { name ->
                             playlistViewModel.createPlaylist(name) // Pass the actual name
                             showCreatePlaylistDialog = false
-                        },
-                        onGenerateClick = {
-                            showCreatePlaylistDialog = false
-                            playerViewModel.showAiPlaylistSheet()
                         }
                     )
                 }

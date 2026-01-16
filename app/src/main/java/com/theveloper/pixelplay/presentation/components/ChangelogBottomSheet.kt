@@ -70,7 +70,6 @@ val changelog = listOf(
                     "Material 3 Expressive UI Update",
                     "10-band Equalizer & Effects",
                     "New Library Sync Flow",
-                    "AI Integration (Gemini Models)",
                     "M3U Playlist Import/Export",
                     "Deezer Artist Artwork Integration",
                     "Custom Playlist Covers"
@@ -140,7 +139,6 @@ val changelog = listOf(
                     "Smoothed out animations and transitions across the app for more fluid navigation.",
                     "Enhanced the artist screen layout with richer details and polish.",
                     "Upgraded DailyMix and YourMix generation with smarter, more diverse selections.",
-                    "Strengthened the AI playlist generation.",
                     "Improved search relevance and presentation for faster discovery.",
                     "Expanded support for a broader range of audio file formats."
                 )
@@ -181,7 +179,6 @@ val changelog = listOf(
                     "Complete redesign of the player.",
                     "Performance improvements in the library.",
                     "Improved application startup speed.",
-                    "The AI now provides better results."
                 )
             ),
             ChangelogSection(

@@ -475,9 +475,6 @@ fun SearchScreen(
                         coverArtUpdate
                     )
                 },
-                generateAiMetadata = { fields ->
-                    playerViewModel.generateAiMetadata(currentSong, fields)
-                },
             )
             if (showPlaylistBottomSheet) {
                 val playlistUiState by playlistViewModel.uiState.collectAsState()

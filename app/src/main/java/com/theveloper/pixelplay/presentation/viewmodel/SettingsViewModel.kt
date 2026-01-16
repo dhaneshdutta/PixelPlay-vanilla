@@ -21,9 +21,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-import com.theveloper.pixelplay.data.preferences.NavBarStyle
-import com.theveloper.pixelplay.data.ai.GeminiModelService
-import com.theveloper.pixelplay.data.ai.GeminiModel
 import com.theveloper.pixelplay.data.preferences.LaunchTab
 import com.theveloper.pixelplay.data.model.Song
 import java.io.File
@@ -34,7 +31,7 @@ data class SettingsUiState(
     val playerThemePreference: String = ThemePreference.ALBUM_ART,
     val mockGenresEnabled: Boolean = false,
     val navBarCornerRadius: Int = 32,
-    val navBarStyle: String = NavBarStyle.DEFAULT,
+    val navBarStyle: String = com.theveloper.pixelplay.data.preferences.NavBarStyle.DEFAULT,
     val carouselStyle: String = CarouselStyle.NO_PEEK,
     val libraryNavigationMode: String = LibraryNavigationMode.TAB_ROW,
     val launchTab: String = LaunchTab.HOME,
@@ -46,9 +43,6 @@ data class SettingsUiState(
     val lyricsSourcePreference: LyricsSourcePreference = LyricsSourcePreference.EMBEDDED_FIRST,
     val autoScanLrcFiles: Boolean = false,
     val blockedDirectories: Set<String> = emptySet(),
-    val availableModels: List<GeminiModel> = emptyList(),
-    val isLoadingModels: Boolean = false,
-    val modelsFetchError: String? = null,
     val appRebrandDialogShown: Boolean = false,
     val fullPlayerLoadingTweaks: FullPlayerLoadingTweaks = FullPlayerLoadingTweaks()
 )
@@ -76,24 +70,14 @@ data class LyricsRefreshProgress(
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val syncManager: SyncManager,
-    private val geminiModelService: GeminiModelService,
     private val lyricsRepository: LyricsRepository,
     private val musicRepository: MusicRepository,
+    private val syncManager: SyncManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
-
-    val geminiApiKey: StateFlow<String> = userPreferencesRepository.geminiApiKey
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
-
-    val geminiModel: StateFlow<String> = userPreferencesRepository.geminiModel
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
-
-    val geminiSystemPrompt: StateFlow<String> = userPreferencesRepository.geminiSystemPrompt
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UserPreferencesRepository.DEFAULT_SYSTEM_PROMPT)
 
     private val fileExplorerStateHolder = FileExplorerStateHolder(userPreferencesRepository, viewModelScope, context)
 
@@ -437,62 +421,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun onGeminiApiKeyChange(apiKey: String) {
-        viewModelScope.launch {
-            userPreferencesRepository.setGeminiApiKey(apiKey)
 
-            // Fetch models when API key changes and is not empty
-            if (apiKey.isNotBlank()) {
-                fetchAvailableModels(apiKey)
-            } else {
-                // Clear models if API key is empty
-                _uiState.update {
-                    it.copy(
-                        availableModels = emptyList(),
-                        modelsFetchError = null
-                    )
-                }
-                userPreferencesRepository.setGeminiModel("")
-            }
-        }
-    }
-
-    fun fetchAvailableModels(apiKey: String) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoadingModels = true, modelsFetchError = null) }
-
-            val result = geminiModelService.fetchAvailableModels(apiKey)
-
-            result.onSuccess { models ->
-                _uiState.update {
-                    it.copy(
-                        availableModels = models,
-                        isLoadingModels = false,
-                        modelsFetchError = null
-                    )
-                }
-
-                // Auto-select first model if none is selected
-                val currentModel = userPreferencesRepository.geminiModel.first()
-                if (currentModel.isEmpty() && models.isNotEmpty()) {
-                    userPreferencesRepository.setGeminiModel(models.first().name)
-                }
-            }.onFailure { error ->
-                _uiState.update {
-                    it.copy(
-                        isLoadingModels = false,
-                        modelsFetchError = error.message ?: "Failed to fetch models"
-                    )
-                }
-            }
-        }
-    }
-
-    fun onGeminiModelChange(modelName: String) {
-        viewModelScope.launch {
-            userPreferencesRepository.setGeminiModel(modelName)
-        }
-    }
 
     fun setNavBarCornerRadius(radius: Int) {
         viewModelScope.launch {
@@ -500,17 +429,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun onGeminiSystemPromptChange(prompt: String) {
-        viewModelScope.launch {
-            userPreferencesRepository.setGeminiSystemPrompt(prompt)
-        }
-    }
-
-    fun resetGeminiSystemPrompt() {
-        viewModelScope.launch {
-            userPreferencesRepository.resetGeminiSystemPrompt()
-        }
-    }
 
 
 

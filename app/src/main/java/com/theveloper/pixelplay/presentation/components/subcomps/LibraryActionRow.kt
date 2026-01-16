@@ -77,7 +77,6 @@ fun LibraryActionRow(
     showSortButton: Boolean,
     showGenerateButton: Boolean = true,
     isPlaylistTab: Boolean,
-    onGenerateWithAiClick: () -> Unit,
     onImportM3uClick: () -> Unit = {},
     isFoldersTab: Boolean,
     modifier: Modifier = Modifier,

@@ -91,8 +91,7 @@ fun EditSongSheet(
     visible: Boolean,
     song: Song,
     onDismiss: () -> Unit,
-    onSave: (title: String, artist: String, album: String, genre: String, lyrics: String, trackNumber: Int, coverArtUpdate: CoverArtUpdate?) -> Unit,
-    generateAiMetadata: suspend (List<String>) -> Result<com.theveloper.pixelplay.data.ai.SongMetadata>
+    onSave: (title: String, artist: String, album: String, genre: String, lyrics: String, trackNumber: Int, coverArtUpdate: CoverArtUpdate?) -> Unit
 ) {
     val transitionState = remember { MutableTransitionState(false) }
     transitionState.targetState = visible
@@ -110,11 +109,10 @@ fun EditSongSheet(
                 enter = slideInVertically(initialOffsetY = { it / 6 }) + fadeIn(animationSpec = tween(220)),
                 exit = slideOutVertically(targetOffsetY = { it / 6 }) + fadeOut(animationSpec = tween(200))
             ) {
-                EditSongContent(
+                EditSongSheetContent(
                     song = song,
                     onDismiss = onDismiss,
-                    onSave = onSave,
-                    generateAiMetadata = generateAiMetadata
+                    onSave = onSave
                 )
             }
         }
@@ -123,11 +121,10 @@ fun EditSongSheet(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun EditSongContent(
+private fun EditSongSheetContent(
     song: Song,
     onDismiss: () -> Unit,
-    onSave: (title: String, artist: String, album: String, genre: String, lyrics: String, trackNumber: Int, coverArtUpdate: CoverArtUpdate?) -> Unit,
-    generateAiMetadata: suspend (List<String>) -> Result<com.theveloper.pixelplay.data.ai.SongMetadata>
+    onSave: (title: String, artist: String, album: String, genre: String, lyrics: String, trackNumber: Int, coverArtUpdate: CoverArtUpdate?) -> Unit
 ) {
     var title by remember { mutableStateOf(song.title) }
     var artist by remember { mutableStateOf(song.displayArtist) }
@@ -141,8 +138,6 @@ private fun EditSongContent(
     var pendingCoverArtUri by remember { mutableStateOf<Uri?>(null) }
 
     var showInfoDialog by remember { mutableStateOf(false) }
-    var showAiDialog by remember { mutableStateOf(false) }
-    var isGenerating by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val pickCoverArtLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -163,42 +158,6 @@ private fun EditSongContent(
         editedCoverArt = null
     }
 
-    if (isGenerating) {
-        AlertDialog(
-            onDismissRequest = { },
-            title = { Text("Generating Metadata") },
-            text = {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-                    CircularProgressIndicator()
-                }
-            },
-            confirmButton = {}
-        )
-    }
-
-    if (showAiDialog) {
-        AiMetadataDialog(
-            song = song,
-            onDismiss = { showAiDialog = false },
-            onGenerate = { fields ->
-                scope.launch {
-                    isGenerating = true
-                    val result = generateAiMetadata(fields)
-                    result.onSuccess { metadata ->
-                        Timber.d("AI metadata generated successfully: $metadata")
-                        title = metadata.title ?: title
-                        artist = metadata.artist ?: artist
-                        album = metadata.album ?: album
-                        genre = metadata.genre ?: genre
-                    }.onFailure { error ->
-                        Timber.e(error, "Failed to generate AI metadata")
-                    }
-                    isGenerating = false
-                }
-                showAiDialog = false
-            }
-        )
-    }
 
     if (showCoverArtCropper && pendingCoverArtUri != null) {
         CoverArtCropperDialog(
@@ -278,30 +237,6 @@ private fun EditSongContent(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    brush = Brush.horizontalGradient(
-                                        colors = listOf(
-                                            MaterialTheme.colorScheme.primary,
-                                            MaterialTheme.colorScheme.secondary,
-                                            MaterialTheme.colorScheme.tertiary
-                                        )
-                                    )
-                                )
-                        ) {
-                            IconButton(onClick = { showAiDialog = true }) {
-                                Icon(
-                                    modifier = Modifier
-                                        .size(20.dp),
-                                    painter = painterResource(id = R.drawable.gemini_ai),
-                                    contentDescription = "Use Gemini AI",
-                                    tint = MaterialTheme.colorScheme.onPrimary
-                                )
-                            }
-                        }
                         FilledTonalIconButton(
                             onClick = { showInfoDialog = true },
                             shape = CircleShape

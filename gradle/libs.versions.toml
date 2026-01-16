@@ -2,9 +2,7 @@
 accompanistDrawablepainter = "0.37.3"
 agp = "8.10.1"
 app = "1.7.0"
-googleGenai = "1.11.0"
-googlePlayServicesCast = "21.5.0"
-amplituda = "2.3.0"
+
 animation = "1.8.1"
 appcompat = "1.7.0"
 capturable = "3.0.1"
@@ -43,8 +41,6 @@ mediaRouter = "1.7.0"
 navigationCompose = "2.9.6"
 paletteKtx = "1.0.0"
 protobufJavalite = "3.25.1"
-pytorch_android = "2.1.0"
-pytorch_android_torchvision = "2.1.0"
 reorderable = "0.9.6"
 reorderables = "2.5.1"
 roomCompiler = "2.7.1"
@@ -65,21 +61,15 @@ javax-inject = "1"
 # Annotations procesing
 ksp = "2.1.0-1.0.29"
 smoothCornerRectAndroidCompose = "v1.0.0"
-spleeterAndroidIos = "1.0.2"
-tensorflowLite = "2.17.0"
-tensorflowLiteSelectTfOps = "2.16.1"
-tensorflowLiteSelectTfOpsVersion = "2.16.1"
-tensorflowLiteSupport = "0.5.0"
 wavySlider = "2.0.0"
 workRuntimeKtx = "2.10.1"
 composeTesting = "1.0.0-alpha03"
 timber = "5.0.1"
-generativeai = "0.9.0"
 
 retrofit = "3.0.0"
 okhttp = "5.1.0"
 mediarouterVersion = "1.8.1"
-playServicesCastFramework = "22.2.0"
+
 navigationRuntimeKtx = "2.9.6"
 material3Version = "1.5.0-alpha11"
 uiautomator = "2.2.0"
@@ -92,10 +82,7 @@ accompanist-drawablepainter = { module = "com.google.accompanist:accompanist-dra
 androidx-app = { module = "androidx.car.app:app", version.ref = "app" }
 androidx-app-projected = { module = "androidx.car.app:app-projected", version.ref = "app" }
 androidx-media = { module = "androidx.media:media", version.ref = "media" }
-androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts" }
-google-genai = { group = "com.google.genai", name = "google-genai", version.ref = "googleGenai" }
-google-play-services-cast-framework = { group = "com.google.android.gms", name = "play-services-cast-framework", version.ref = "googlePlayServicesCast" }
-amplituda = { module = "com.github.lincollincol:amplituda", version.ref = "amplituda" }
+
 androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
 desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -154,16 +141,9 @@ ktor-server-netty = { group = "io.ktor", name = "ktor-server-netty-jvm", version
 material = { module = "com.google.android.material:material", version.ref = "material" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobufJavalite" }
-pytorch_android = { module = "org.pytorch:pytorch_android", version.ref = "pytorch_android" }
-pytorch_android_torchvision = { module = "org.pytorch:pytorch_android_torchvision", version.ref = "pytorch_android_torchvision" }
 reorderable = { module = "org.burnoutcrew.composereorderable:reorderable", version.ref = "reorderable" }
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 smooth-corner-rect-android-compose = { module = "com.github.racra:smooth-corner-rect-android-compose", version.ref = "smoothCornerRectAndroidCompose" }
-spleeter-android-ios = { module = "com.github.FaceOnLive:Spleeter-Android-iOS", version.ref = "spleeterAndroidIos" }
-tensorflow-lite = { module = "org.tensorflow:tensorflow-lite", version.ref = "tensorflowLite" }
-#tensorflow-lite-select-tf-ops = { module = "org.tensorflow:tensorflow-lite-select-tf-ops", version.ref = "tensorflowLiteSelectTfOps" }
-tensorflow-lite-select-tf-ops = { module = "org.tensorflow:tensorflow-lite-select-tf-ops", version.ref = "tensorflowLiteSelectTfOpsVersion" }
-tensorflow-lite-support = { module = "org.tensorflow:tensorflow-lite-support", version.ref = "tensorflowLiteSupport" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 wavy-slider = { module = "ir.mahozad.multiplatform:wavy-slider", version.ref = "wavySlider" }
 checker-qual = { group = "org.checkerframework", name = "checker-qual", version.ref = "checkerframework" }
@@ -171,13 +151,12 @@ taglib = { group = "io.github.kyant0", name = "taglib", version.ref = "taglib" }
 jaudiotagger = { group = "net.jthink", name = "jaudiotagger", version.ref = "jaudiotagger" }
 vorbisjava-core = { group = "org.gagravarr", name = "vorbis-java-core", version.ref = "vorbisjava" }
 reorderables = { group = "sh.calvin.reorderable", name = "reorderable", version.ref = "reorderables" }
-generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generativeai" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 androidx-mediarouter = { group = "androidx.mediarouter", name = "mediarouter", version.ref = "mediarouterVersion" }
-play-services-cast-framework = { group = "com.google.android.gms", name = "play-services-cast-framework", version.ref = "playServicesCastFramework" }
+
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Version" }
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }

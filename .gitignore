@@ -16,3 +16,9 @@ local.properties
 misc.xml
 markdown.xml
 *.salive
+
+# Local/Temp files
+.vscode/
+*.apk
+*.png
+build_log*.txt

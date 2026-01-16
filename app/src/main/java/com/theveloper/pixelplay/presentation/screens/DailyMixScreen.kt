@@ -64,8 +64,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import com.theveloper.pixelplay.R
 import com.theveloper.pixelplay.data.model.Song
-import com.theveloper.pixelplay.presentation.components.AiPlaylistSheet
-import com.theveloper.pixelplay.presentation.components.DailyMixMenu
 import com.theveloper.pixelplay.presentation.components.MiniPlayerHeight
 import com.theveloper.pixelplay.presentation.components.NavBarContentHeight
 import com.theveloper.pixelplay.presentation.components.PlaylistBottomSheet
@@ -104,36 +102,11 @@ fun DailyMixScreen(
     val stablePlayerState by playerViewModel.stablePlayerState.collectAsState()
     val favoriteSongIds by playerViewModel.favoriteSongIds.collectAsState()
 
-    val showAiSheet by playerViewModel.showAiPlaylistSheet.collectAsState()
-    val isGeneratingAiPlaylist by playerViewModel.isGeneratingAiPlaylist.collectAsState()
-    val aiError by playerViewModel.aiError.collectAsState()
     val lazyListState = rememberLazyListState()
 
     var showSongInfoSheet by remember { mutableStateOf(false) }
     var selectedSongForInfo by remember { mutableStateOf<Song?>(null) }
-    var showDailyMixMenu by remember { mutableStateOf(false) }
 
-    if (showDailyMixMenu) {
-        DailyMixMenu(
-            onDismiss = { showDailyMixMenu = false },
-            onApplyPrompt = { prompt ->
-                playerViewModel.regenerateDailyMixWithPrompt(prompt)
-                showDailyMixMenu = false
-            },
-            isLoading = isGeneratingAiPlaylist
-        )
-    }
-
-    if (showAiSheet) {
-        AiPlaylistSheet(
-            onDismiss = { playerViewModel.dismissAiPlaylistSheet() },
-            onGenerateClick = { prompt, minLength, maxLength ->
-                playerViewModel.generateAiPlaylist(prompt, minLength, maxLength, saveAsPlaylist = false)
-            },
-            isGenerating = isGeneratingAiPlaylist,
-            error = aiError
-        )
-    }
 
     val surfaceContainer = MaterialTheme.colorScheme.surface
     val headerColor = MaterialTheme.colorScheme.primary
@@ -192,9 +165,6 @@ fun DailyMixScreen(
             onEditSong = { newTitle, newArtist, newAlbum, newGenre, newLyrics, newTrackNumber, coverArtUpdate ->
                 playerViewModel.editSongMetadata(song, newTitle, newArtist, newAlbum, newGenre, newLyrics, newTrackNumber, coverArtUpdate)
             },
-            generateAiMetadata = { fields ->
-                playerViewModel.generateAiMetadata(song, fields)
-            },
             removeFromListTrigger = removeFromListTrigger
         )
 
@@ -235,7 +205,7 @@ fun DailyMixScreen(
                     ExpressiveDailyMixHeader(
                         songs = dailyMixSongs,
                         scrollState = lazyListState,
-                        onShowMenu = { playerViewModel.showAiPlaylistSheet() }
+                        onShowMenu = { }
                     )
                 }
 
@@ -516,21 +486,6 @@ private fun ExpressiveDailyMixHeader(
                     text = "${songs.size} Songs • ${formatDuration(totalDuration)}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                )
-            }
-            LargeExtendedFloatingActionButton(
-                modifier = Modifier,
-                onClick = onShowMenu,
-                shape = RoundedStarShape(
-                    sides = 8,
-                    curve = 0.05,
-                    rotation = 0f
-                )
-            ) {
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    painter = painterResource(R.drawable.gemini_ai),
-                    contentDescription = "Play"
                 )
             }
         }

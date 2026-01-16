@@ -108,9 +108,6 @@ fun SettingsCategoryScreen(
     
     // State Collection (Duplicated from SettingsScreen for now to ensure functionality)
     val uiState by settingsViewModel.uiState.collectAsState()
-    val geminiApiKey by settingsViewModel.geminiApiKey.collectAsState()
-    val geminiModel by settingsViewModel.geminiModel.collectAsState()
-    val geminiSystemPrompt by settingsViewModel.geminiSystemPrompt.collectAsState()
     val currentPath by settingsViewModel.currentPath.collectAsState()
     val directoryChildren by settingsViewModel.currentDirectoryChildren.collectAsState()
     val availableStorages by settingsViewModel.availableStorages.collectAsState()
@@ -131,14 +128,6 @@ fun SettingsCategoryScreen(
     var showRegenerateStatsDialog by remember { mutableStateOf(false) }
 
     // Fetch models on page load when API key exists and models are not already loaded
-    LaunchedEffect(category, geminiApiKey) {
-        if (category == SettingsCategory.AI_INTEGRATION && 
-            geminiApiKey.isNotBlank() && 
-            uiState.availableModels.isEmpty() && 
-            !uiState.isLoadingModels) {
-            settingsViewModel.fetchAvailableModels(geminiApiKey)
-        }
-    }
 
     // TopBar Animations (identical to SettingsScreen)
     // TopBar Animations (identical to SettingsScreen)
@@ -475,75 +464,6 @@ fun SettingsCategoryScreen(
                                     }
                                 },
                                 leadingIcon = { Icon(painterResource(R.drawable.rounded_all_inclusive_24), null, tint = MaterialTheme.colorScheme.secondary) }
-                            )
-                        }
-                        SettingsCategory.AI_INTEGRATION -> {
-                            GeminiApiKeyItem(
-                                apiKey = geminiApiKey,
-                                onApiKeySave = { settingsViewModel.onGeminiApiKeyChange(it) },
-                                title = "Gemini API Key",
-                                subtitle = "Needed for AI-powered features."
-                            )
-                            
-                            // Show loading, error, or model selector based on state
-                            if (uiState.isLoadingModels) {
-                                Spacer(Modifier.height(8.dp))
-                                Surface(
-                                    color = MaterialTheme.colorScheme.surfaceContainer,
-                                    shape = RoundedCornerShape(10.dp),
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(16.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                    ) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(24.dp),
-                                            strokeWidth = 2.dp
-                                        )
-                                        Text(
-                                            text = "Loading available models...",
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
-                                }
-                            } else if (uiState.modelsFetchError != null) {
-                                Spacer(Modifier.height(8.dp))
-                                Surface(
-                                    color = MaterialTheme.colorScheme.errorContainer,
-                                    shape = RoundedCornerShape(10.dp),
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        text = uiState.modelsFetchError ?: "Error loading models",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onErrorContainer,
-                                        modifier = Modifier.padding(16.dp)
-                                    )
-                                }
-                            } else if (uiState.availableModels.isNotEmpty()) {
-                                Spacer(Modifier.height(8.dp))
-                                ThemeSelectorItem(
-                                    label = "AI Model",
-                                    description = "Select the Gemini model to use.",
-                                    options = uiState.availableModels.associate { it.name to it.displayName },
-                                    selectedKey = geminiModel.ifEmpty { uiState.availableModels.firstOrNull()?.name ?: "" },
-                                    onSelectionChanged = { settingsViewModel.onGeminiModelChange(it) },
-                                    leadingIcon = { Icon(Icons.Rounded.Science, null, tint = MaterialTheme.colorScheme.secondary) }
-                                )
-                            }
-                            
-                            // System Prompt
-                            Spacer(Modifier.height(8.dp))
-                            GeminiSystemPromptItem(
-                                systemPrompt = geminiSystemPrompt,
-                                defaultPrompt = com.theveloper.pixelplay.data.preferences.UserPreferencesRepository.DEFAULT_SYSTEM_PROMPT,
-                                onSystemPromptSave = { settingsViewModel.onGeminiSystemPromptChange(it) },
-                                onReset = { settingsViewModel.resetGeminiSystemPrompt() },
-                                title = "System Prompt",
-                                subtitle = "Customize how the AI behaves."
                             )
                         }
                         SettingsCategory.DEVELOPER -> {

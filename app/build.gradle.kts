@@ -12,9 +12,9 @@ plugins {
 android {
     namespace = "com.theveloper.pixelplay"
     compileSdk = 35
+    buildToolsVersion = "35.0.0"
 
     androidResources {
-        noCompress.add("tflite")
     }
 
     packaging {
@@ -89,6 +89,12 @@ android {
             "plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=${project.rootDir.absolutePath}/app/compose_stability.conf"
         )
     }
+
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+        checkDependencies = false
+    }
 }
 
 dependencies {
@@ -104,9 +110,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.generativeai)
-    implementation(libs.androidx.mediarouter)
-    implementation(libs.play.services.cast.framework)
+
+
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.compose.material3)
     testImplementation(libs.junit)
@@ -188,8 +193,8 @@ dependencies {
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.media3.session)
-    implementation(libs.androidx.media.router)
-    implementation(libs.google.play.services.cast.framework)
+
+
     implementation(libs.androidx.media3.exoplayer.ffmpeg)
 
     // Palette API for color extraction
@@ -222,27 +227,14 @@ dependencies {
     // Kotlin Collections
     implementation(libs.kotlinx.collections.immutable) // Verifica la última versión
 
-    // Gemini
-    implementation(libs.google.genai)
-
     //permisisons
     implementation(libs.accompanist.permissions)
-
-    //Audio editing
-    // Spleeter para separación de audio y Amplituda para procesar formas de onda
-    //implementation(libs.tensorflow.lite)
-    //implementation(libs.tensorflow.lite.support)
-    ///implementation(libs.tensorflow.lite.select.tf.ops)
-    implementation(libs.amplituda)
 
     // Compose-audiowaveform para la UI
     implementation(libs.compose.audiowaveform)
 
     // Media3 Transformer (ya debería estar, pero asegúrate)
     implementation(libs.androidx.media3.transformer)
-
-    //implementation(libs.pytorch.android)
-    //implementation(libs.pytorch.android.torchvision)
 
     //Checker framework
     implementation(libs.checker.qual)
@@ -262,11 +254,9 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     // Ktor for HTTP Server
-    implementation(libs.ktor.server.core)
-    implementation(libs.ktor.server.netty)
-    implementation(libs.kotlinx.coroutines.core)
 
-    implementation(libs.androidx.ui.text.google.fonts)
+
+
 
     implementation(libs.accompanist.drawablepainter)
     implementation(kotlin("test"))

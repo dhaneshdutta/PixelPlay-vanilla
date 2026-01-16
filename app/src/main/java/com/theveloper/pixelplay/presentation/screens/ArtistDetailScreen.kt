@@ -318,9 +318,6 @@ fun ArtistDetailScreen(
                 onEditSong = { newTitle, newArtist, newAlbum, newGenre, newLyrics, newTrackNumber, coverArtUpdate ->
                     playerViewModel.editSongMetadata(currentSong, newTitle, newArtist, newAlbum, newGenre, newLyrics, newTrackNumber, coverArtUpdate)
                 },
-                generateAiMetadata = { fields ->
-                    playerViewModel.generateAiMetadata(currentSong, fields)
-                },
                 removeFromListTrigger = removeFromListTrigger
             )
             if (showPlaylistBottomSheet) {

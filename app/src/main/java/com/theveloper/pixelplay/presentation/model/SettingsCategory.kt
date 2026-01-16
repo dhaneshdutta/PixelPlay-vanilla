@@ -9,7 +9,6 @@ import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.LibraryMusic
 import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material.icons.rounded.Palette
-import androidx.compose.material.icons.rounded.SmartToy
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.theveloper.pixelplay.R
 
@@ -37,12 +36,6 @@ enum class SettingsCategory(
         title = "Playback",
         subtitle = "Audio behavior, crossfade, and background play",
         icon = Icons.Rounded.MusicNote // Using MusicNote again or maybe PlayCircle if available
-    ),
-    AI_INTEGRATION(
-        id = "ai",
-        title = "AI Integration (Beta)",
-        subtitle = "Gemini API key and AI features",
-        iconRes = R.drawable.gemini_ai
     ),
     DEVELOPER(
         id = "developer",

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -60,10 +61,6 @@ import com.theveloper.pixelplay.presentation.components.subcomps.AutoSizingTextT
 import com.theveloper.pixelplay.utils.formatDuration
 import com.theveloper.pixelplay.utils.shapes.RoundedStarShape
 import racra.compose.smooth_corner_rect_library.AbsoluteSmoothCornerShape
-import androidx.core.net.toUri
-import com.theveloper.pixelplay.presentation.viewmodel.PlaylistViewModel
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.theveloper.pixelplay.data.ai.SongMetadata
 import com.theveloper.pixelplay.data.media.CoverArtUpdate
 import com.theveloper.pixelplay.ui.theme.MontserratFamily
 import java.io.File
@@ -83,7 +80,6 @@ fun SongInfoBottomSheet(
     onNavigateToAlbum: () -> Unit,
     onNavigateToArtist: () -> Unit,
     onEditSong: (title: String, artist: String, album: String, genre: String, lyrics: String, trackNumber: Int, coverArtUpdate: CoverArtUpdate?) -> Unit,
-    generateAiMetadata: suspend (List<String>) -> Result<SongMetadata>,
     removeFromListTrigger: () -> Unit
 ) {
     val context = LocalContext.current
@@ -468,7 +464,6 @@ fun SongInfoBottomSheet(
         onSave = { title, artist, album, genre, lyrics, trackNumber, coverArt ->
             onEditSong(title, artist, album, genre, lyrics, trackNumber, coverArt)
             showEditSheet = false
-        },
-        generateAiMetadata = generateAiMetadata
+        }
     )
 }

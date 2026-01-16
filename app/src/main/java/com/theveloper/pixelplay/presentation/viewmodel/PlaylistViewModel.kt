@@ -327,7 +327,6 @@ class PlaylistViewModel @Inject constructor(
         cropScale: Float = 1f,
         cropPanX: Float = 0f,
         cropPanY: Float = 0f,
-        isAiGenerated: Boolean = false,
         isQueueGenerated: Boolean = false,
         coverShapeType: String? = null,
         coverShapeDetail1: Float? = null,
@@ -353,7 +352,6 @@ class PlaylistViewModel @Inject constructor(
             userPreferencesRepository.createPlaylist(
                 name = name,
                 songIds = songIds, // Use passed songIds
-                isAiGenerated = isAiGenerated,
                 isQueueGenerated = isQueueGenerated,
                 coverImageUri = savedCoverPath,
                 coverColorArgb = coverColor,

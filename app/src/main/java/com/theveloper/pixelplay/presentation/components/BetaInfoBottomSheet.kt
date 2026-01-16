@@ -144,7 +144,7 @@ fun BetaInfoBottomSheet(modifier: Modifier = Modifier) {
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "This huge update brings a complete UI overhaul, 10-band Equalizer, and AI powers.",
+                                text = "This huge update brings a complete UI overhaul and 10-band Equalizer.",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -194,7 +194,7 @@ fun BetaInfoBottomSheet(modifier: Modifier = Modifier) {
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "New 10-band Equalizer with effects, plus AI integration for smarter playlists.",
+                            text = "New 10-band Equalizer with effects for better audio quality.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

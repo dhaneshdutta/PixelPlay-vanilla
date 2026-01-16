@@ -48,8 +48,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import com.theveloper.pixelplay.presentation.components.BetaInfoBottomSheet
-import com.theveloper.pixelplay.presentation.components.ChangelogBottomSheet
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -71,7 +69,6 @@ import com.theveloper.pixelplay.presentation.components.AppSidebarDrawer
 import com.theveloper.pixelplay.presentation.components.DailyMixSection
 import com.theveloper.pixelplay.presentation.components.DrawerDestination
 import com.theveloper.pixelplay.presentation.components.HomeGradientTopBar
-import com.theveloper.pixelplay.presentation.components.HomeOptionsBottomSheet
 import com.theveloper.pixelplay.presentation.components.MiniPlayerHeight
 import com.theveloper.pixelplay.presentation.components.NavBarContentHeight
 import com.theveloper.pixelplay.presentation.components.SmartImage
@@ -136,11 +133,7 @@ fun HomeScreen(
     // Padding inferior si hay canción en reproducción
     val bottomPadding = if (currentSong != null) MiniPlayerHeight else 0.dp
 
-    var showOptionsBottomSheet by remember { mutableStateOf(false) }
-    var showChangelogBottomSheet by remember { mutableStateOf(false) }
-    var showBetaInfoBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
-    val betaSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     LocalContext.current
 
@@ -158,12 +151,6 @@ fun HomeScreen(
                 HomeGradientTopBar(
                     onNavigationIconClick = {
                         navController.navigate(Screen.Settings.route)
-                    },
-                    onMoreOptionsClick = {
-                        showChangelogBottomSheet = true
-                    },
-                    onBetaClick = {
-                        showBetaInfoBottomSheet = true
                     },
                     onMenuClick = {
                         // onOpenSidebar() // Disabled
@@ -227,12 +214,6 @@ fun HomeScreen(
                     }
                 }
 
-                item(key = "listening_stats_preview") {
-                    StatsOverviewCard(
-                        summary = weeklyStats,
-                        onClick = { navController.navigate(Screen.Stats.route) }
-                    )
-                }
             }
         }
         Box(
@@ -252,42 +233,6 @@ fun HomeScreen(
                 )
         ) {
 
-        }
-    }
-    if (showOptionsBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showOptionsBottomSheet = false },
-            sheetState = sheetState
-        ) {
-            HomeOptionsBottomSheet(
-                onNavigateToMashup = {
-                    scope.launch {
-                        sheetState.hide()
-                    }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            showOptionsBottomSheet = false
-                            navController.navigate(Screen.DJSpace.route)
-                        }
-                    }
-                }
-            )
-        }
-    }
-    if (showChangelogBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showChangelogBottomSheet = false },
-            sheetState = sheetState
-        ) {
-            ChangelogBottomSheet()
-        }
-    }
-    if (showBetaInfoBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showBetaInfoBottomSheet = false },
-            sheetState = betaSheetState,
-            //contentWindowInsets = { WindowInsets.statusBars.only(WindowInsets.statusBars) }
-        ) {
-            BetaInfoBottomSheet()
         }
     }
 }

@@ -158,7 +158,6 @@ fun FullPlayerContent(
     onQueueDragStart: () -> Unit,
     onQueueDrag: (Float) -> Unit,
     onQueueRelease: (Float, Float) -> Unit,
-    onShowCastClicked: () -> Unit,
     onShuffleToggle: () -> Unit,
     onRepeatToggle: () -> Unit,
     onFavoriteToggle: () -> Unit
@@ -278,7 +277,6 @@ fun FullPlayerContent(
     }
 
     val gestureScope = rememberCoroutineScope()
-    val isCastConnecting by playerViewModel.isCastConnecting.collectAsState()
 
     // Sub sections , to be reused in different layout modes
 
@@ -580,19 +578,14 @@ fun FullPlayerContent(
                         navigationIconContentColor = LocalMaterialTheme.current.onPrimaryContainer
                     ),
                     title = {
-                        val isRemotePlaybackActive by playerViewModel.isRemotePlaybackActive.collectAsState()
-                        if (!isCastConnecting) {
-                            AnimatedVisibility(visible = (!isRemotePlaybackActive)) {
-                                Text(
-                                    modifier = Modifier.padding(start = 18.dp),
-                                    text = "Now Playing",
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    style = MaterialTheme.typography.labelLargeEmphasized,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-                        }
+                        Text(
+                            modifier = Modifier.padding(start = 18.dp),
+                            text = "Now Playing",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.labelLargeEmphasized,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     },
                     navigationIcon = {
                         Box(
@@ -627,130 +620,7 @@ fun FullPlayerContent(
                             horizontalArrangement = Arrangement.spacedBy(6.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            val isRemotePlaybackActive by playerViewModel.isRemotePlaybackActive.collectAsState()
-                            val selectedRouteName by playerViewModel.selectedRoute.map { it?.name }.collectAsState(initial = null)
-                            val isBluetoothEnabled by playerViewModel.isBluetoothEnabled.collectAsState()
-                            val bluetoothName by playerViewModel.bluetoothName.collectAsState()
-                            val showCastLabel = isCastConnecting || (isRemotePlaybackActive && selectedRouteName != null)
-                            val isBluetoothActive =
-                                isBluetoothEnabled && !bluetoothName.isNullOrEmpty() && !isRemotePlaybackActive && !isCastConnecting
-                            val castIconPainter = when {
-                                isCastConnecting || isRemotePlaybackActive -> painterResource(R.drawable.rounded_cast_24)
-                                isBluetoothActive -> painterResource(R.drawable.rounded_bluetooth_24)
-                                else -> painterResource(R.drawable.rounded_mobile_speaker_24)
-                            }
-                            val castCornersExpanded = 50.dp
-                            val castCornersCompact = 6.dp
-                            val castTopStart by animateDpAsState(
-                                targetValue = if (showCastLabel) castCornersExpanded else castCornersExpanded,
-                                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
-                            )
-                            val castTopEnd by animateDpAsState(
-                                targetValue = if (showCastLabel) castCornersExpanded else castCornersCompact,
-                                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
-                            )
-                            val castBottomStart by animateDpAsState(
-                                targetValue = if (showCastLabel) castCornersExpanded else castCornersExpanded,
-                                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
-                            )
-                            val castBottomEnd by animateDpAsState(
-                                targetValue = if (showCastLabel) castCornersExpanded else castCornersCompact,
-                                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
-                            )
-                            val castContainerColor by animateColorAsState(
-                                targetValue = LocalMaterialTheme.current.onPrimary,
-                                animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium)
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .height(42.dp)
-                                    .align(Alignment.CenterVertically)
-                                    .animateContentSize(
-                                        animationSpec = spring(
-                                            dampingRatio = Spring.DampingRatioMediumBouncy,
-                                            stiffness = Spring.StiffnessLow
-                                        )
-                                    )
-                                    .widthIn(
-                                        min = 50.dp,
-                                        max = if (showCastLabel) 190.dp else 58.dp
-                                    )
-                                    .clip(
-                                        RoundedCornerShape(
-                                            topStart = castTopStart.coerceAtLeast(0.dp),
-                                            topEnd = castTopEnd.coerceAtLeast(0.dp),
-                                            bottomStart = castBottomStart.coerceAtLeast(0.dp),
-                                            bottomEnd = castBottomEnd.coerceAtLeast(0.dp)
-                                        )
-                                    )
-                                    .background(castContainerColor)
-                                    .clickable { onShowCastClicked() },
-                                contentAlignment = Alignment.CenterStart
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .padding(start = 14.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Start
-                                ) {
-                                    Icon(
-                                        painter = castIconPainter,
-                                        contentDescription = when {
-                                            isCastConnecting || isRemotePlaybackActive -> "Cast"
-                                            isBluetoothActive -> "Bluetooth"
-                                            else -> "Local playback"
-                                        },
-                                        tint = LocalMaterialTheme.current.primary
-                                    )
-                                    AnimatedVisibility(visible = showCastLabel) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Spacer(Modifier.width(8.dp))
-                                            AnimatedContent(
-                                                targetState = when {
-                                                    isCastConnecting -> "Connecting…"
-                                                    isRemotePlaybackActive && selectedRouteName != null -> selectedRouteName ?: ""
-                                                    else -> ""
-                                                },
-                                                transitionSpec = {
-                                                    fadeIn(animationSpec = tween(150)) togetherWith fadeOut(animationSpec = tween(120))
-                                                },
-                                                label = "castButtonLabel"
-                                            ) { label ->
-                                                Row(
-                                                    modifier = Modifier.padding(end = 16.dp),
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                                ) {
-                                                    Text(
-                                                        text = label,
-                                                        style = MaterialTheme.typography.labelMedium,
-                                                        color = LocalMaterialTheme.current.primary,
-                                                        maxLines = 1,
-                                                        overflow = TextOverflow.Ellipsis,
-                                                        modifier = Modifier.weight(1f, fill = false)
-                                                    )
-                                                    AnimatedVisibility(visible = isCastConnecting) {
-                                                        CircularProgressIndicator(
-                                                            modifier = Modifier
-                                                                .size(14.dp),
-                                                            strokeWidth = 2.dp,
-                                                            color = LocalMaterialTheme.current.primary
-                                                        )
-                                                    }
-                                                    if (isRemotePlaybackActive && !isCastConnecting) {
-                                                        Box(
-                                                            modifier = Modifier
-                                                                .size(8.dp)
-                                                                .clip(CircleShape)
-                                                                .background(Color(0xFF38C450))
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+
 
                             // Queue Button
                             Box(

@@ -64,7 +64,6 @@ import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.theveloper.pixelplay.R
-import com.theveloper.pixelplay.data.github.GitHubContributorService
 import com.theveloper.pixelplay.presentation.components.MiniPlayerHeight
 import com.theveloper.pixelplay.presentation.components.SmartImage
 import com.theveloper.pixelplay.presentation.components.brickbreaker.BrickBreakerOverlay
@@ -159,41 +158,26 @@ fun AboutScreen(
     }
     // ... existing code ...
     val authors = listOf(
-        Contributor(name = "Theo Vilardo", githubUrl = "https://github.com/theovilardo", telegramUrl = "https://t.me/thevelopersupport", avatarUrl = "https://avatars.githubusercontent.com/u/26845343?v=4"),
+        Contributor(
+            name = "Theo Vilardo",
+            role = "Original Author",
+            githubUrl = "https://github.com/theovilardo",
+            telegramUrl = "https://t.me/thevelopersupport",
+            avatarUrl = "https://avatars.githubusercontent.com/u/26845343?v=4"
+        ),
+        Contributor(
+            name = "Dhanesh Dutta",
+            role = "Maintainer (Vanilla)",
+            githubUrl = "https://github.com/dhaneshdutta",
+            iconRes = R.drawable.my_avatar
+        )
     )
 
     // State to hold fetched contributors
-    var contributors by remember { mutableStateOf<List<Contributor>>(emptyList()) }
-    var isLoadingContributors by remember { mutableStateOf(true) }
+    // var contributors by remember { mutableStateOf<List<Contributor>>(emptyList()) }
+    // var isLoadingContributors by remember { mutableStateOf(true) }
 
-    val githubService = remember { GitHubContributorService() }
-
-    // Fetch contributors from GitHub API
-    LaunchedEffect(Unit) {
-        try {
-            val result = githubService.fetchContributors()
-            result.onSuccess { githubContributors ->
-                // Convert GitHub contributors to our Contributor model
-                contributors = githubContributors
-                    .filter { it.login != "theovilardo" } // Remove author from contributors list
-                    .map { github ->
-                        Contributor(
-                            name = github.login,
-                            role = "",
-                            avatarUrl = github.avatar_url,
-                            githubUrl = github.html_url
-                        )
-                    }
-            }
-            result.onFailure { exception ->
-                Timber.e(exception, "Failed to fetch contributors from GitHub")
-                // Fall back to empty list if fetch fails
-                contributors = emptyList()
-            }
-        } finally {
-            isLoadingContributors = false
-        }
-    }
+    // val githubService = remember { GitHubContributorService() }
 
     // Correctly initialize MutableTransitionState
     val transitionState = remember { MutableTransitionState(false) }
@@ -367,7 +351,7 @@ fun AboutScreen(
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
                         Text(
-                            text = "This app was built with passion and a love for music. We hope you enjoy the experience.",
+                            text = "A clean and privacy-focused music player. This degoogled variant is minimalised to just play music in a beautiful interface, maintaining the polished experience while respecting your freedom.",
                             style = MaterialTheme.typography.bodyMedium,
                             textAlign = TextAlign.Center
                         )
@@ -391,48 +375,16 @@ fun AboutScreen(
                 }
             }
 
-            item(key = authors[0].name) {
-                ContributorCard(authors[0])
+            items(
+                items = authors,
+                key = { it.name }
+            ) { author ->
+                ContributorCard(author)
+                Spacer(modifier = Modifier.height(8.dp))
             }
 
-            item(key = "author_contributor_spacer") {
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-
-            // Contributors section
-            item(key = "contributors_header") {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Text(
-                        text = "Contributors",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
-            }
-
-            if (isLoadingContributors) {
-                item(key = "contributors_loading") {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 32.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-            } else {
-                items(
-                    items = contributors,
-                    key = { it.name }
-                ) { contributor ->
-                    ContributorCard(contributor)
-                }
+            item(key = "end_spacer") {
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
         AboutTopBar(
@@ -604,19 +556,12 @@ private fun ContributorAvatar(
                 )
             }
             iconRes != null -> {
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .background(letterBackground),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(iconRes),
-                        contentDescription = "Icono de $name",
-                        tint = iconTint,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
+                Image(
+                    painter = painterResource(iconRes),
+                    contentDescription = "Avatar de $name",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
             }
             else -> {
                 // Letter tile fallback
