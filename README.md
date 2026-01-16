@@ -1,6 +1,6 @@
 # Pixel Player (Vanilla)
 
-A clean, ad-free, and privacy-focused music player. This is a degoogled fork of Pixel Player, minimalised to focus purely on providing a beautiful music listening experience without any AI or GMS dependencies.
+A clean and privacy-focused music player. This is a degoogled fork of Pixel Player, minimalised to focus purely on providing a beautiful music listening experience without any AI or GMS dependencies.
 
 ## Features
 - **Privacy Focused**: No tracking, no internet permissions required for core functionality.
@@ -9,7 +9,7 @@ A clean, ad-free, and privacy-focused music player. This is a degoogled fork of 
 - **Beautiful UI**: Modern Material Design 3 interface with dynamic colors.
 
 ## Installation
-You can install the latest release APK from the [Releases](url-to-releases) page or build it yourself.
+You can install the latest release APK from the [Releases](https://github.com/dhaneshdutta/PixelPlay-vanilla/releases/) page or build it yourself.
 
 ## Build Instructions
 
